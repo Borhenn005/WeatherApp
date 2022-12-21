@@ -1,3 +1,20 @@
 <resources>
     <string name="app_name">WeatherApp</string>
+    
+    <string name="search_places">Search Places</string>
+    <string name="demo_date">9 January, 2:41 PM</string>
+    <string name="default_numbers">100</string>
+    <string name="pressure">Pressure</string>
+    <string name="max_temp">Max Temp.</string>
+    <string name="humidity">Humidity</string>
+    <string name="min_temp">Min Temp.</string>
+    <string name="wind_speed">Wind Speed</string>
+    <string name="temperature_in_f">Temperature IN F</string>
+    <string name="day">DAY 17</string>
+    <string name="night">NIGHT 9</string>
+    <string name="main_temp">16*</string>
+    <string name="feels_alike">Feels like 16*</string>
+    <string name="weather_type">Drizzle</string>
+    <string name="surnise">Surnise</string>
+    <string name="sunset">Sunset</string>
 </resources>
