@@ -15,6 +15,7 @@
     <string name="main_temp">16 °C</string>
     <string name="feels_alike">Feels like 16*</string>
     <string name="weather_type">Drizzle</string>
-    <string name="surnise">Surnise</string>
+    <string name="sunrise">Sunrise</string>
     <string name="sunset">Sunset</string>
+    <string name="temperature">Temperature</string>
 </resources>
