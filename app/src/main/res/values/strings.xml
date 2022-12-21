@@ -12,7 +12,7 @@
     <string name="temperature_in_f">Temperature IN F</string>
     <string name="day">DAY 17</string>
     <string name="night">NIGHT 9</string>
-    <string name="main_temp">16*</string>
+    <string name="main_temp">16 °C</string>
     <string name="feels_alike">Feels like 16*</string>
     <string name="weather_type">Drizzle</string>
     <string name="surnise">Surnise</string>

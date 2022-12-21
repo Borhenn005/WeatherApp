@@ -9,5 +9,5 @@
     <dimen name="text_large">18sp</dimen>
     <dimen name="text_medium">10sp</dimen>
     <dimen name="text_x_large">23sp</dimen>
-    <dimen name="text_super_large">100sp</dimen>
+    <dimen name="text_super_large">90sp</dimen>
 </resources>
