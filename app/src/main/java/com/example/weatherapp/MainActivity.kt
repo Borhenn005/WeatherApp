@@ -9,20 +9,30 @@ import android.location.LocationManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings
+import android.view.View
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
+import androidx.databinding.DataBindingUtil
+import com.example.weatherapp.databinding.ActivityMainBinding
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+    private lateinit var activityMainBinding: ActivityMainBinding
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
 
+        activityMainBinding = DataBindingUtil.setContentView(this,R.layout.activity_main)
+        supportActionBar?.hide()
+
+        /*
+            Hide Main Layout when start activity until getting the location from user
+         */
+        activityMainBinding.rlMainLayout.visibility = View.GONE
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
 
@@ -56,7 +66,11 @@ class MainActivity : AppCompatActivity() {
                         Toast.makeText(this,"Null Result Recieved", Toast.LENGTH_SHORT).show()
                     }
                     else{
+                            /*
+                                FETCH THE WEATHER AFTER GETTING THE LOCATION
+                            */
 
+                            fetchCurrentLocationWeather(location.latitude.toString(),location.longitude.toString())
                     }
                 }
             }
@@ -73,6 +87,11 @@ class MainActivity : AppCompatActivity() {
             requestPermissionsFromUser()
         }
     }
+
+    private fun fetchCurrentLocationWeather(latitude: String, longitude: String) {
+
+    }
+
 
     private fun requestPermissionsFromUser() {
         ActivityCompat.requestPermissions(
