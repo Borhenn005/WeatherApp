@@ -12,6 +12,8 @@ import android.os.Bundle
 import android.provider.Settings
 import android.view.View
 import android.view.WindowManager
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
@@ -52,6 +54,37 @@ class MainActivity : AppCompatActivity() {
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
 
         getCurrentLocation()
+
+        activityMainBinding.etGetCityName.setOnEditorActionListener { v, actionId, keyEvent ->
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                getCityWeather(activityMainBinding.etGetCityName.text.toString())
+                val view = this.currentFocus
+                if (view != null) {
+                    val imm: InputMethodManager =
+                        getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+                    imm.hideSoftInputFromWindow(view.windowToken, 0)
+                    activityMainBinding.etGetCityName.clearFocus()
+                }
+                true
+
+            } else false
+            }
+    }
+
+    private fun getCityWeather(cityName: String) {
+        activityMainBinding.pbLoading.visibility = View.VISIBLE
+        ApiUtitlities.getApiInterface()?.getCityWeatherData(cityName, API_KEY)?.enqueue(object : Callback<ModelClass>
+        {
+            @RequiresApi(Build.VERSION_CODES.O)
+            override fun onResponse(call: Call<ModelClass>, response: Response<ModelClass>) {
+                setDataOnView(response.body())
+            }
+
+            override fun onFailure(call: Call<ModelClass>, t: Throwable) {
+                Toast.makeText(applicationContext,"Not a valid city Name ... ",Toast.LENGTH_SHORT).show()
+            }
+
+        })
     }
 
 
@@ -131,7 +164,7 @@ class MainActivity : AppCompatActivity() {
         activityMainBinding.tvDayMaxTemp.text = "Day " + kelvinToCelsius(response!!.main.temp_max) + "°"
         activityMainBinding.tvDayMinTemp.text = "Night " + kelvinToCelsius(response!!.main.temp_min) + "°"
         activityMainBinding.tvTemp.text = "" + kelvinToCelsius(response!!.main.temperature) + "°"
-        activityMainBinding.tvFeelsLike.text = "" + kelvinToCelsius(response!!.main.feels_like) + "°"
+        activityMainBinding.tvFeelsLike.text = "Feels alike " + kelvinToCelsius(response!!.main.feels_like) + "°"
 
 
         activityMainBinding.tvWeatherType.text = response.weather[0].main
@@ -413,11 +446,11 @@ class MainActivity : AppCompatActivity() {
 
         if(requestCode == PERMISSION_REQUEST_ACCESS_LOCATION){
             if(grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                Toast.makeText(applicationContext,"Permission Granted", Toast.LENGTH_SHORT).show()
+                Toast.makeText(applicationContext,"Granted", Toast.LENGTH_SHORT).show()
                 getCurrentLocation()
             }
             else{
-                Toast.makeText(applicationContext,"Permission Denied", Toast.LENGTH_SHORT).show()
+                Toast.makeText(applicationContext,"Denied", Toast.LENGTH_SHORT).show()
             }
         }
     }
