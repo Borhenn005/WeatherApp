@@ -6,16 +6,31 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationManager
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings
 import android.view.View
+import android.view.WindowManager
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import com.example.weatherapp.POJO.ModelClass
+import com.example.weatherapp.Utilities.ApiUtitlities
 import com.example.weatherapp.databinding.ActivityMainBinding
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import java.math.RoundingMode
+import java.text.SimpleDateFormat
+import java.time.Instant
+import java.time.ZoneId
+import java.util.*
+import kotlin.math.roundToInt
 
 class MainActivity : AppCompatActivity() {
 
@@ -89,7 +104,238 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun fetchCurrentLocationWeather(latitude: String, longitude: String) {
+        activityMainBinding.pbLoading.visibility = View.VISIBLE
 
+        ApiUtitlities.getApiInterface()?.getCurrentWeatherData(latitude,longitude,API_KEY)?.enqueue(object : Callback<ModelClass>{
+            @RequiresApi(Build.VERSION_CODES.O)
+            override fun onResponse(call: Call<ModelClass>, response: Response<ModelClass>) {
+                if(response.isSuccessful){
+                    setDataOnView(response.body())
+                }
+            }
+
+            override fun onFailure(call: Call<ModelClass>, t: Throwable) {
+                Toast.makeText(applicationContext,"ERROR",Toast.LENGTH_SHORT).show()
+            }
+
+        })
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun setDataOnView(response: ModelClass?) {
+        val sdf = SimpleDateFormat("dd/MM/yyyy hh:mm")
+        val currentDate = sdf.format(Date())
+
+        activityMainBinding.tvDateAndTime.text = currentDate
+
+        activityMainBinding.tvDayMaxTemp.text = "Day " + kelvinToCelsius(response!!.main.temp_max) + "°"
+        activityMainBinding.tvDayMinTemp.text = "Night " + kelvinToCelsius(response!!.main.temp_min) + "°"
+        activityMainBinding.tvTemp.text = "" + kelvinToCelsius(response!!.main.temperature) + "°"
+        activityMainBinding.tvFeelsLike.text = "" + kelvinToCelsius(response!!.main.feels_like) + "°"
+
+
+        activityMainBinding.tvWeatherType.text = response.weather[0].main
+
+        activityMainBinding.tvSunset.text = timeStampToLocalDate(response.sys.sunset.toLong())
+        activityMainBinding.tvSunrise.text = timeStampToLocalDate(response.sys.sunrise.toLong())
+
+
+        activityMainBinding.tvPressure.text = response.main.pressure.toString()
+        activityMainBinding.tvHumidity.text = response.main.humidity.toString() + " %"
+        activityMainBinding.tvWindSpeed.text = response.wind.speed.toString() + " m/s"
+
+        activityMainBinding.tvTempFarenhite.text = "" + ((kelvinToCelsius(response.main.temperature)).times(1.8).plus(32).roundToInt())
+
+        activityMainBinding.etGetCityName.setText(response.name)
+
+
+        updateUI(response.weather[0].id)
+
+
+    }
+
+    private fun updateUI(id : Int){
+        if(id in 200..232){
+            /*
+                THUNDERSTORM WEATHER
+            */
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+
+            window.statusBarColor = resources.getColor(R.color.thunderstorm)
+            activityMainBinding.rlToolbar.setBackgroundColor(resources.getColor(R.color.thunderstorm))
+
+            activityMainBinding.rlSubLayout.background = ContextCompat.getDrawable(
+                this@MainActivity,
+                R.drawable.thunderstorm_bg
+            )
+
+            activityMainBinding.llBgBelow.background = ContextCompat.getDrawable(
+                this@MainActivity,
+                R.drawable.thunderstorm_bg
+            )
+
+            activityMainBinding.llBgAbove .background = ContextCompat.getDrawable(
+                this@MainActivity,
+                R.drawable.thunderstorm_bg
+            )
+
+            activityMainBinding.imgWeatherBg.setImageResource(R.drawable.thunderstorm_bg)
+            activityMainBinding.imgWeatherIcon.setImageResource(R.drawable.ic_clear)
+        }else if(id in 300..321){
+            /*
+                Drizzle WEATHER
+            */
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+
+            window.statusBarColor = resources.getColor(R.color.drizzle)
+            activityMainBinding.rlToolbar.setBackgroundColor(resources.getColor(R.color.drizzle))
+
+            activityMainBinding.rlSubLayout.background = ContextCompat.getDrawable(
+                this@MainActivity,
+                R.drawable.drizzle_bg
+            )
+
+            activityMainBinding.llBgBelow.background = ContextCompat.getDrawable(
+                this@MainActivity,
+                R.drawable.drizzle_bg
+            )
+
+            activityMainBinding.llBgAbove .background = ContextCompat.getDrawable(
+                this@MainActivity,
+                R.drawable.drizzle_bg
+            )
+
+            activityMainBinding.imgWeatherBg.setImageResource(R.drawable.drizzle_bg)
+            activityMainBinding.imgWeatherIcon.setImageResource(R.drawable.ic_clear)
+        }else if(id in 500..531){
+            /*
+                Rain WEATHER
+            */
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+
+            window.statusBarColor = resources.getColor(R.color.rain)
+            activityMainBinding.rlToolbar.setBackgroundColor(resources.getColor(R.color.rain))
+
+            activityMainBinding.rlSubLayout.background = ContextCompat.getDrawable(
+                this@MainActivity,
+                R.drawable.rain_bg
+            )
+
+            activityMainBinding.llBgBelow.background = ContextCompat.getDrawable(
+                this@MainActivity,
+                R.drawable.rain_bg
+            )
+
+            activityMainBinding.llBgAbove .background = ContextCompat.getDrawable(
+                this@MainActivity,
+                R.drawable.rain_bg
+            )
+
+            activityMainBinding.imgWeatherBg.setImageResource(R.drawable.rain_bg)
+            activityMainBinding.imgWeatherIcon.setImageResource(R.drawable.ic_clear)
+        }else if(id in 600..622){
+            /*
+                Snow WEATHER
+            */
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+
+            window.statusBarColor = resources.getColor(R.color.snow)
+            activityMainBinding.rlToolbar.setBackgroundColor(resources.getColor(R.color.snow))
+
+            activityMainBinding.rlSubLayout.background = ContextCompat.getDrawable(
+                this@MainActivity,
+                R.drawable.snow_bg
+            )
+
+            activityMainBinding.llBgBelow.background = ContextCompat.getDrawable(
+                this@MainActivity,
+                R.drawable.snow_bg
+            )
+
+            activityMainBinding.llBgAbove .background = ContextCompat.getDrawable(
+                this@MainActivity,
+                R.drawable.snow_bg
+            )
+
+            activityMainBinding.imgWeatherBg.setImageResource(R.drawable.snow_bg)
+            activityMainBinding.imgWeatherIcon.setImageResource(R.drawable.ic_clear)
+        }else if(id == 800){
+            /*
+                Clear WEATHER
+            */
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+
+            window.statusBarColor = resources.getColor(R.color.clear)
+            activityMainBinding.rlToolbar.setBackgroundColor(resources.getColor(R.color.clear))
+
+            activityMainBinding.rlSubLayout.background = ContextCompat.getDrawable(
+                this@MainActivity,
+                R.drawable.clear_bg
+            )
+
+            activityMainBinding.llBgBelow.background = ContextCompat.getDrawable(
+                this@MainActivity,
+                R.drawable.clear_bg
+            )
+
+            activityMainBinding.llBgAbove .background = ContextCompat.getDrawable(
+                this@MainActivity,
+                R.drawable.clear_bg
+            )
+
+            activityMainBinding.imgWeatherBg.setImageResource(R.drawable.clear_bg)
+            activityMainBinding.imgWeatherIcon.setImageResource(R.drawable.ic_clear)
+        }else if(id in 801..804){
+            /*
+                Clouds WEATHER
+            */
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+
+            window.statusBarColor = resources.getColor(R.color.clouds)
+            activityMainBinding.rlToolbar.setBackgroundColor(resources.getColor(R.color.clouds))
+
+            activityMainBinding.rlSubLayout.background = ContextCompat.getDrawable(
+                this@MainActivity,
+                R.drawable.clouds_bg
+            )
+
+            activityMainBinding.llBgBelow.background = ContextCompat.getDrawable(
+                this@MainActivity,
+                R.drawable.clouds_bg
+            )
+
+            activityMainBinding.llBgAbove .background = ContextCompat.getDrawable(
+                this@MainActivity,
+                R.drawable.clouds_bg
+            )
+
+            activityMainBinding.imgWeatherBg.setImageResource(R.drawable.clouds_bg)
+            activityMainBinding.imgWeatherIcon.setImageResource(R.drawable.ic_clear)
+        }
+    }
+
+    private fun kelvinToCelsius(temp : Double) : Double{
+        var intTemp = temp
+        intTemp = intTemp.minus(273)
+
+        return intTemp.toBigDecimal().setScale(1, RoundingMode.UP).toDouble()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun timeStampToLocalDate(timeStamp : Long) : String{
+        val localTime = timeStamp.let {
+            Instant.ofEpochSecond(it)
+                .atZone(ZoneId.systemDefault())
+                .toLocalTime()
+        }
+
+        return localTime.toString()
     }
 
 
@@ -106,6 +352,8 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         private const val PERMISSION_REQUEST_ACCESS_LOCATION = 100
+
+        const val API_KEY = "0feffc0b4bd0ed4ebc87fcedf3d6d96e"
     }
 
     private fun isLocationEnabled(): Boolean {

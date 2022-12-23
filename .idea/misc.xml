@@ -5,12 +5,13 @@
       <map>
         <entry key="..\:/Users/borhe/StudioProjects/WeatherApp/app/src/main/res/drawable/clear_bg.xml" value="0.2265" />
         <entry key="..\:/Users/borhe/StudioProjects/WeatherApp/app/src/main/res/drawable/clouds_bg.xml" value="0.1405" />
+        <entry key="..\:/Users/borhe/StudioProjects/WeatherApp/app/src/main/res/drawable/drizzle_bg.xml" value="0.1" />
         <entry key="..\:/Users/borhe/StudioProjects/WeatherApp/app/src/main/res/drawable/ic_baseline_search_24.xml" value="0.1405" />
         <entry key="..\:/Users/borhe/StudioProjects/WeatherApp/app/src/main/res/drawable/mist_bg.xml" value="0.1405" />
         <entry key="..\:/Users/borhe/StudioProjects/WeatherApp/app/src/main/res/drawable/rain_bg.xml" value="0.1405" />
         <entry key="..\:/Users/borhe/StudioProjects/WeatherApp/app/src/main/res/drawable/snow_bg.xml" value="0.1455" />
         <entry key="..\:/Users/borhe/StudioProjects/WeatherApp/app/src/main/res/drawable/thunderstorm_bg.xml" value="0.1405" />
-        <entry key="..\:/Users/borhe/StudioProjects/WeatherApp/app/src/main/res/layout/activity_main.xml" value="0.264" />
+        <entry key="..\:/Users/borhe/StudioProjects/WeatherApp/app/src/main/res/layout/activity_main.xml" value="0.28585365853658534" />
       </map>
     </option>
   </component>
