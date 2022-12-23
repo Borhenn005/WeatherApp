@@ -263,6 +263,33 @@ class MainActivity : AppCompatActivity() {
 
             activityMainBinding.imgWeatherBg.setImageResource(R.drawable.snow_bg)
             activityMainBinding.imgWeatherIcon.setImageResource(R.drawable.ic_clear)
+        }else if(id in 701..781){
+            /*
+                Atmosphere WEATHER
+            */
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+
+            window.statusBarColor = resources.getColor(R.color.atmosphere)
+            activityMainBinding.rlToolbar.setBackgroundColor(resources.getColor(R.color.atmosphere))
+
+            activityMainBinding.rlSubLayout.background = ContextCompat.getDrawable(
+                this@MainActivity,
+                R.drawable.mist_bg
+            )
+
+            activityMainBinding.llBgBelow.background = ContextCompat.getDrawable(
+                this@MainActivity,
+                R.drawable.mist_bg
+            )
+
+            activityMainBinding.llBgAbove .background = ContextCompat.getDrawable(
+                this@MainActivity,
+                R.drawable.mist_bg
+            )
+
+            activityMainBinding.imgWeatherBg.setImageResource(R.drawable.mist_bg)
+            activityMainBinding.imgWeatherIcon.setImageResource(R.drawable.ic_clear)
         }else if(id == 800){
             /*
                 Clear WEATHER
@@ -318,6 +345,10 @@ class MainActivity : AppCompatActivity() {
             activityMainBinding.imgWeatherBg.setImageResource(R.drawable.clouds_bg)
             activityMainBinding.imgWeatherIcon.setImageResource(R.drawable.ic_clear)
         }
+
+
+        activityMainBinding.pbLoading.visibility = View.GONE
+        activityMainBinding.rlMainLayout.visibility = View.VISIBLE
     }
 
     private fun kelvinToCelsius(temp : Double) : Double{
